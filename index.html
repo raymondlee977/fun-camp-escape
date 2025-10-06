@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Escape Grid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; /* move grid towards the top */
+      height: 100vh;
+      overflow: hidden;
+      padding-top: 5vh; /* adds some breathing space from the top */
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 0;
+      aspect-ratio: 1 / 1;
+      width: min(90vw, 90vh);
+      max-width: 700px;
+      background-image: url('your-image.jpg');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 2px solid white;
+      position: relative;
+    }
+
+
+    .tile {
+      position: relative;
+      border: 1px solid white;
+      box-sizing: border-box;
+      background-color: rgba(0, 0, 0, 1);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      font-size: clamp(10px, 1.5vw, 16px);
+    }
+
+    .tile p {
+      margin: 0;
+      z-index: 1;
+      word-wrap: break-word;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      width: 90%; /* ensures text wraps within tile */
+      text-align: center;
+    }
+    /* Overlay input (absolute so it doesn't affect layout) */
+    .tile input {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      padding: 5px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border: 1px solid white;
+      color: white;
+      text-align: center;
+      font-size: inherit;
+      outline: none;
+      z-index: 2;
+    }
+
+    .tile.revealed {
+      background-color: transparent;
+      pointer-events: none;
+    }
+
+    .tile.revealed p,
+    .tile.revealed input {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid">
+    <div class="tile" data-answer="1"><p>AHHHHHHHHHHHHHHHH?</p><input type="text" oninput="check(this)"></div>
+    <div class="tile" data-answer="1"><p>BABABABABABAB?</p><input type="text" oninput="check(this)"></div>
+    <div class="tile" data-answer="1"><p>NANANANANANANaaaA?</p><input type="text" oninput="check(this)"></div>
+    <div class="tile" data-answer="1"><p>laksjdfoiwjenadf?</p><input type="text" oninput="check(this)"></div>
+    <div class="tile" data-answer="1"><p>whaaaaaaaaaaaaaaaaaaaaaaaaaa?</p><input type="text" oninput="check(this)"></div>
+    <div class="tile" data-answer="1"><p>aaaaaaaaaaaaaaaaaaaaa?</p><input type="text" oninput="check(this)"></div>
+    <div class="tile" data-answer="1"><p>tttttttttttttttttt?</p><input type="text" oninput="check(this)"></div>
+    <div class="tile" data-answer="1"><p>kkkkkkkkkkkkkkkkkkkkkkk?</p><input type="text" oninput="check(this)"></div>
+    <div class="tile" data-answer="1"><p>jjjjjjjjjjjjjjj?</p><input type="text" oninput="check(this)"></div>
+  </div>
+
+  <script>
+    function check(input) {
+      const tile = input.parentElement;
+      const correct = tile.getAttribute('data-answer').toLowerCase();
+      const attempt = input.value.trim().toLowerCase();
+      if (attempt === correct) {
+        tile.classList.add('revealed');
+      }
+    }
+  </script>
+</body>
+</html>
