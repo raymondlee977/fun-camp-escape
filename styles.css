@@ -1,0 +1,130 @@
+body {
+  margin: 0;
+  background-color: rgb(245, 224, 80);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  overflow: hidden;
+  padding-top: 5vh;
+  font-family: "Luckiest Guy", cursive;
+}
+
+#team-select {
+  text-align: center;
+}
+
+#game-container {
+  display: none;
+  text-align: center;
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  aspect-ratio: 1 / 1;
+  width: min(90vw, 90vh);
+  max-width: 700px;
+  border: 3px solid white;
+  margin: 0 auto;
+}
+
+.column {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  border-left: 1px solid white;
+  border-right: 1px solid white;
+  position: relative;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.column::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--bg-image);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+  z-index: 0;
+}
+
+/* Reveal image when column is complete */
+.column.revealed::before {
+  opacity: 1;
+}
+
+.tile {
+  position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  padding: 8px;
+  font-size: clamp(10px, 1.6vw, 16px);
+  transition: opacity 0.3s ease;
+}
+
+.tile.revealed {
+  opacity: 0; /* hide the tile when correct */
+  pointer-events: none;
+}
+
+.tile p {
+  margin: 0;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  width: 90%;
+  text-align: center;
+  z-index: 1;
+}
+
+.tile input {
+  margin-top: 5px;
+  width: 70%;
+  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgb(0, 0, 0);
+  color: rgb(0, 0, 0);
+  text-align: center;
+  font-size: inherit;
+  outline: none;
+  z-index: 2;
+}
+
+.header-banner {
+  position: relative;
+  width: 70%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+
+.header-banner img {
+  width: 100%;
+  display: block;
+}
+
+.header-banner h2 {
+  position: absolute;
+  top: 28%; /* adjust based on your image layout */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-size: clamp(30px, 4vw, 40px);
+  color: black; /* or white depending on background */
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6); /* optional glow */
+  pointer-events: none; /* so clicks go through to image if needed */
+}

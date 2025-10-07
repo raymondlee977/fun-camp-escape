@@ -1,111 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Escape Grid</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <style>
-    body {
-      margin: 0;
-      background-color: black;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start; /* move grid towards the top */
-      height: 100vh;
-      overflow: hidden;
-      padding-top: 5vh; /* adds some breathing space from the top */
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>Escape Grid</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="team-select">
+      <img src="minion-squad.png" alt="Description of image" width="300" />
+      <h2>Select Your Minion</h2>
+      <select id="team-dropdown">
+        <option value="">-- Select your MINION --</option>
+        <option value="team1">Bob</option>
+        <option value="team2">Dave</option>
+        <option value="team3">Kevin</option>
+        <option value="team4">Stuart</option>
+        <option value="team5">Phil</option>
+        <option value="team1">Carl</option>
+        <option value="team2">Otto</option>
+        <option value="team3">Mel</option>
+        <option value="team4">Bee-do</option>
+        <option value="team5">Mark</option>
+      </select>
+      <br /><br />
+      <button onclick="startGame()">Start</button>
+    </div>
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      gap: 0;
-      aspect-ratio: 1 / 1;
-      width: min(90vw, 90vh);
-      max-width: 700px;
-      background-image: url('your-image.jpg');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      border: 2px solid white;
-      position: relative;
-    }
+    <div id="game-container">
+      <div class="header-banner">
+        <img src="screen.png" alt="Minion Header" />
+        <h2 id="team-name">Minion: ???</h2>
+      </div>
+      <div class="grid" id="grid">
+        <div class="column" id="col-1"></div>
+        <div class="column" id="col-2"></div>
+        <div class="column" id="col-3"></div>
+      </div>
+    </div>
 
+    <script>
+      const teamData = {
+        team1: [
+          { question: "Bob & Carl Q1", answer: "1" },
+          { question: "Bob & Carl Q2", answer: "1" },
+          { question: "Bob & Carl Q3", answer: "1" },
+          { question: "Bob & Carl Q4", answer: "1" },
+          { question: "Bob & Carl Q5", answer: "1" },
+          { question: "Bob & Carl Q6", answer: "1" },
+          { question: "Bob & Carl Q7", answer: "1" },
+          { question: "Bob & Carl Q8", answer: "1" },
+          { question: "Bob & Carl Q9", answer: "1" },
+        ],
+        team2: [
+          { question: "Dave & Otto Q1", answer: "1" },
+          { question: "Dave & Otto Q2", answer: "1" },
+          { question: "Dave & Otto Q3", answer: "1" },
+          { question: "Dave & Otto Q4", answer: "1" },
+          { question: "Dave & Otto Q5", answer: "1" },
+          { question: "Dave & Otto Q6", answer: "1" },
+          { question: "Dave & Otto Q7", answer: "1" },
+          { question: "Dave & Otto Q8", answer: "1" },
+          { question: "Dave & Otto Q9", answer: "1" },
+        ],
+        team3: [
+          { question: "Kevin & Mel Q1", answer: "1" },
+          { question: "Kevin & Mel Q2", answer: "1" },
+          { question: "Kevin & Mel Q3", answer: "1" },
+          { question: "Kevin & Mel Q4", answer: "1" },
+          { question: "Kevin & Mel Q5", answer: "1" },
+          { question: "Kevin & Mel Q6", answer: "1" },
+          { question: "Kevin & Mel Q7", answer: "1" },
+          { question: "Kevin & Mel Q8", answer: "1" },
+          { question: "Kevin & Mel Q9", answer: "1" },
+        ],
+        team4: [
+          { question: "Stuart & Bee-do Q1", answer: "1" },
+          { question: "Stuart & Bee-do Q2", answer: "1" },
+          { question: "Stuart & Bee-do Q3", answer: "1" },
+          { question: "Stuart & Bee-do Q4", answer: "1" },
+          { question: "Stuart & Bee-do Q5", answer: "1" },
+          { question: "Stuart & Bee-do Q6", answer: "1" },
+          { question: "Stuart & Bee-do Q7", answer: "1" },
+          { question: "Stuart & Bee-do Q8", answer: "1" },
+          { question: "Stuart & Bee-do Q9", answer: "1" },
+        ],
+        team5: [
+          { question: "Phil & Mark Q1", answer: "1" },
+          { question: "Phil & Mark Q2", answer: "1" },
+          { question: "Phil & Mark Q3", answer: "1" },
+          { question: "Phil & Mark Q4", answer: "1" },
+          { question: "Phil & Mark Q5", answer: "1" },
+          { question: "Phil & Mark Q6", answer: "1" },
+          { question: "Phil & Mark Q7", answer: "1" },
+          { question: "Phil & Mark Q8", answer: "1" },
+          { question: "Phil & Mark Q9", answer: "1" },
+        ],
+      };
 
-    .tile {
-      position: relative;
-      border: 1px solid white;
-      box-sizing: border-box;
-      background-color: rgba(0, 0, 0, 1);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 10px;
-      font-size: clamp(10px, 1.5vw, 16px);
-    }
+      const columnImages = ["agnes.png", "bleh.png", "banana.png"];
 
-    .tile p {
-      margin: 0;
-      z-index: 1;
-      word-wrap: break-word;
-      word-break: break-word;
-      overflow-wrap: break-word;
-      width: 90%; /* ensures text wraps within tile */
-      text-align: center;
-    }
-    /* Overlay input (absolute so it doesn't affect layout) */
-    .tile input {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70%;
-      padding: 5px;
-      background-color: rgba(0, 0, 0, 0.6);
-      border: 1px solid white;
-      color: white;
-      text-align: center;
-      font-size: inherit;
-      outline: none;
-      z-index: 2;
-    }
+      function startGame() {
+        const dropdown = document.getElementById("team-dropdown");
+        const team = dropdown.value;
+        const teamLabel = dropdown.options[dropdown.selectedIndex].text;
 
-    .tile.revealed {
-      background-color: transparent;
-      pointer-events: none;
-    }
+        if (!team || !teamData[team])
+          return alert("Please select a valid team");
 
-    .tile.revealed p,
-    .tile.revealed input {
-      display: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="grid">
-    <div class="tile" data-answer="1"><p>AHHHHHHHHHHHHHHHH?</p><input type="text" oninput="check(this)"></div>
-    <div class="tile" data-answer="1"><p>BABABABABABAB?</p><input type="text" oninput="check(this)"></div>
-    <div class="tile" data-answer="1"><p>NANANANANANANaaaA?</p><input type="text" oninput="check(this)"></div>
-    <div class="tile" data-answer="1"><p>laksjdfoiwjenadf?</p><input type="text" oninput="check(this)"></div>
-    <div class="tile" data-answer="1"><p>whaaaaaaaaaaaaaaaaaaaaaaaaaa?</p><input type="text" oninput="check(this)"></div>
-    <div class="tile" data-answer="1"><p>aaaaaaaaaaaaaaaaaaaaa?</p><input type="text" oninput="check(this)"></div>
-    <div class="tile" data-answer="1"><p>tttttttttttttttttt?</p><input type="text" oninput="check(this)"></div>
-    <div class="tile" data-answer="1"><p>kkkkkkkkkkkkkkkkkkkkkkk?</p><input type="text" oninput="check(this)"></div>
-    <div class="tile" data-answer="1"><p>jjjjjjjjjjjjjjj?</p><input type="text" oninput="check(this)"></div>
-  </div>
+        document.getElementById("team-select").style.display = "none";
+        document.getElementById("game-container").style.display = "block";
+        document.getElementById("team-name").textContent = `${teamLabel}`;
 
-  <script>
-    function check(input) {
-      const tile = input.parentElement;
-      const correct = tile.getAttribute('data-answer').toLowerCase();
-      const attempt = input.value.trim().toLowerCase();
-      if (attempt === correct) {
-        tile.classList.add('revealed');
+        const columns = document.querySelectorAll(".column");
+        columns.forEach((col, i) => {
+          col.innerHTML = "";
+          col.style.setProperty("--bg-image", `url('${columnImages[i]}')`);
+          col.classList.remove("revealed");
+        });
+
+        // Fill 3 tiles per column
+        teamData[team].forEach(({ question, answer }, index) => {
+          const tile = document.createElement("div");
+          tile.className = "tile";
+          tile.setAttribute("data-answer", answer.toLowerCase());
+          tile.innerHTML = `<p>${question}</p><input type="text" oninput="check(this)">`;
+
+          const colIndex = Math.floor(index / 3); // 0, 1, or 2
+          document.getElementById(`col-${colIndex + 1}`).appendChild(tile);
+        });
       }
-    }
-  </script>
-</body>
+
+      function check(input) {
+        const tile = input.parentElement;
+        const correct = tile.getAttribute("data-answer").toLowerCase();
+        const attempt = input.value.trim().toLowerCase();
+
+        if (attempt === correct) {
+          tile.classList.add("revealed");
+          checkColumnComplete(tile.closest(".column"));
+        }
+      }
+
+      function checkColumnComplete(column) {
+        const tiles = column.querySelectorAll(".tile");
+        const allRevealed = Array.from(tiles).every((tile) =>
+          tile.classList.contains("revealed")
+        );
+        if (allRevealed) {
+          column.classList.add("revealed");
+        }
+      }
+    </script>
+  </body>
 </html>
