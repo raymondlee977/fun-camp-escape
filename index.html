@@ -7,153 +7,908 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
     />
-    <link rel="stylesheet" href="styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap"
       rel="stylesheet"
     />
-  </head>
-  <body>
-    <div id="team-select">
-      <img src="main-image.png" alt="Description of image" width="300" />
-      <h2>Select Your Minion</h2>
-      <select id="team-dropdown">
-        <option value="">-- Select your MINION --</option>
-        <option value="team1">Bob</option>
-        <option value="team2">Dave</option>
-        <option value="team3">Kevin</option>
-        <option value="team4">Stuart</option>
-        <option value="team5">Phil</option>
-        <option value="team1">Carl</option>
-        <option value="team2">Otto</option>
-        <option value="team3">Mel</option>
-        <option value="team4">Bee-do</option>
-        <option value="team5">Mark</option>
-      </select>
-      <br /><br />
-      <button onclick="startGame()">Start</button>
-    </div>
-
-    <div id="game-container">
-      <h2 id="team-name">Minion: Bob</h2>
-      <div class="grid" id="grid">
-        <div class="column" id="col-1"></div>
-        <div class="column" id="col-2"></div>
-        <div class="column" id="col-3"></div>
-      </div>
-      <img class="bottomImg" src="bottom.png" alt="minionssssssss" />
-    </div>
-
-    <script>
-      const teamData = {
-        team1: [
-          { question: "Bob & Carl Q1", answer: "1" },
-          { question: "Bob & Carl Q2", answer: "1" },
-          { question: "Bob & Carl Q3", answer: "1" },
-          { question: "Bob & Carl Q4", answer: "1" },
-          { question: "Bob & Carl Q5", answer: "1" },
-          { question: "Bob & Carl Q6", answer: "1" },
-          { question: "Bob & Carl Q7", answer: "1" },
-          { question: "Bob & Carl Q8", answer: "1" },
-          { question: "Bob & Carl Q9", answer: "1" },
-        ],
-        team2: [
-          { question: "Dave & Otto Q1", answer: "1" },
-          { question: "Dave & Otto Q2", answer: "1" },
-          { question: "Dave & Otto Q3", answer: "1" },
-          { question: "Dave & Otto Q4", answer: "1" },
-          { question: "Dave & Otto Q5", answer: "1" },
-          { question: "Dave & Otto Q6", answer: "1" },
-          { question: "Dave & Otto Q7", answer: "1" },
-          { question: "Dave & Otto Q8", answer: "1" },
-          { question: "Dave & Otto Q9", answer: "1" },
-        ],
-        team3: [
-          { question: "Kevin & Mel Q1", answer: "1" },
-          { question: "Kevin & Mel Q2", answer: "1" },
-          { question: "Kevin & Mel Q3", answer: "1" },
-          { question: "Kevin & Mel Q4", answer: "1" },
-          { question: "Kevin & Mel Q5", answer: "1" },
-          { question: "Kevin & Mel Q6", answer: "1" },
-          { question: "Kevin & Mel Q7", answer: "1" },
-          { question: "Kevin & Mel Q8", answer: "1" },
-          { question: "Kevin & Mel Q9", answer: "1" },
-        ],
-        team4: [
-          { question: "Stuart & Bee-do Q1", answer: "1" },
-          { question: "Stuart & Bee-do Q2", answer: "1" },
-          { question: "Stuart & Bee-do Q3", answer: "1" },
-          { question: "Stuart & Bee-do Q4", answer: "1" },
-          { question: "Stuart & Bee-do Q5", answer: "1" },
-          { question: "Stuart & Bee-do Q6", answer: "1" },
-          { question: "Stuart & Bee-do Q7", answer: "1" },
-          { question: "Stuart & Bee-do Q8", answer: "1" },
-          { question: "Stuart & Bee-do Q9", answer: "1" },
-        ],
-        team5: [
-          { question: "Phil & Mark Q1", answer: "1" },
-          { question: "Phil & Mark Q2", answer: "1" },
-          { question: "Phil & Mark Q3", answer: "1" },
-          { question: "Phil & Mark Q4", answer: "1" },
-          { question: "Phil & Mark Q5", answer: "1" },
-          { question: "Phil & Mark Q6", answer: "1" },
-          { question: "Phil & Mark Q7", answer: "1" },
-          { question: "Phil & Mark Q8", answer: "1" },
-          { question: "Phil & Mark Q9", answer: "1" },
-        ],
-      };
-
-      const columnImages = ["agnes.png", "pony.png", "banana.png"];
-
-      function startGame() {
-        const dropdown = document.getElementById("team-dropdown");
-        const team = dropdown.value;
-        const teamLabel = dropdown.options[dropdown.selectedIndex].text;
-
-        if (!team || !teamData[team])
-          return alert("Please select a valid team");
-
-        document.getElementById("team-select").style.display = "none";
-        document.getElementById("game-container").style.display = "block";
-        document.getElementById("team-name").textContent = `${teamLabel}`;
-
-        const columns = document.querySelectorAll(".column");
-        columns.forEach((col, i) => {
-          col.innerHTML = "";
-          col.style.setProperty("--bg-image", `url('${columnImages[i]}')`);
-          col.classList.remove("revealed");
-        });
-
-        // Fill 3 tiles per column
-        teamData[team].forEach(({ question, answer }, index) => {
-          const tile = document.createElement("div");
-          tile.className = "tile";
-          tile.setAttribute("data-answer", answer.toLowerCase());
-          tile.innerHTML = `<p>${question}</p><input type="text" oninput="check(this)">`;
-
-          const colIndex = Math.floor(index / 3); // 0, 1, or 2
-          document.getElementById(`col-${colIndex + 1}`).appendChild(tile);
-        });
+    <style>
+      body {
+        margin: 0;
+        background-color: rgb(245, 224, 80);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        height: 100vh;
+        padding-top: 1vh;
+        font-family: "Luckiest Guy", cursive;
+        overflow: hidden;
       }
 
-      function check(input) {
-        const tile = input.parentElement;
-        const correct = tile.getAttribute("data-answer").toLowerCase();
-        const attempt = input.value.trim().toLowerCase();
+      #game-container {
+        text-align: center;
+        width: 100%;
+        max-height: fit-content;
+      }
 
-        if (attempt === correct) {
-          tile.classList.add("revealed");
-          checkColumnComplete(tile.closest(".column"));
+      .bottomImg {
+        width: 100%;
+        max-width: 500px;
+        width: min(90vw, 90vh);
+      }
+
+      .grid-wrapper {
+        position: relative;
+        width: min(90vw, 90vh);
+        max-width: 500px;
+        aspect-ratio: 1 / 1;
+        margin: 0 auto;
+        border: 3px solid white;
+      }
+
+      .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+      }
+
+      .grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        z-index: 1;
+      }
+
+      .tile {
+        background-color: rgb(245, 224, 80);
+        border: 1px solid white;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: clamp(14px, 2vw, 20px);
+        color: rgb(0, 0, 0);
+      }
+
+      .tile:hover {
+        background-color: rgb(255, 234, 100);
+      }
+
+      .tile.revealed {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #final-reveal {
+        display: none;
+        margin-top: 20px;
+        font-size: clamp(18px, 3vw, 28px);
+        color: rgb(0, 0, 0);
+        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+      }
+
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background-color: rgb(245, 224, 80);
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .modal-content h2 {
+        margin-top: 0;
+        color: rgb(0, 0, 0);
+      }
+
+      .close-btn {
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: rgb(0, 0, 0);
+      }
+
+      /* Wordle game styles */
+      .wordle-board {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin: 20px auto;
+        width: fit-content;
+      }
+
+      .wordle-row {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+      }
+
+      .wordle-letter {
+        width: 60px;
+        height: 60px;
+        border: 2px solid #d3d6da;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 32px;
+        font-weight: bold;
+        background-color: white;
+        color: black;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+      }
+
+      .wordle-letter.filled {
+        border-color: #878a8c;
+        animation: pop 0.1s ease-in-out;
+      }
+
+      .wordle-letter.correct {
+        background-color: #6aaa64;
+        color: white;
+        border-color: #6aaa64;
+        animation: flip 0.5s ease-in-out;
+      }
+
+      .wordle-letter.present {
+        background-color: #c9b458;
+        color: white;
+        border-color: #c9b458;
+        animation: flip 0.5s ease-in-out;
+      }
+
+      .wordle-letter.absent {
+        background-color: #787c7e;
+        color: white;
+        border-color: #787c7e;
+        animation: flip 0.5s ease-in-out;
+      }
+
+      @keyframes pop {
+        0%,
+        90% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
         }
       }
 
-      function checkColumnComplete(column) {
-        const tiles = column.querySelectorAll(".tile");
+      @keyframes flip {
+        0% {
+          transform: rotateX(0);
+        }
+        50% {
+          transform: rotateX(90deg);
+        }
+        90% {
+          transform: rotateX(0);
+        }
+      }
+
+      /* Keyboard styles */
+      .keyboard {
+        margin-top: 20px;
+      }
+
+      .keyboard-row {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        margin-bottom: 6px;
+      }
+
+      .key {
+        min-width: 30px;
+        height: 50px;
+        padding: 0 10px;
+        background-color: #e0e0e0;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-transform: uppercase;
+        transition: background-color 0.2s;
+        color: black;
+      }
+
+      .key:hover {
+        background-color: #d0d0d0;
+      }
+
+      .key:active {
+        transform: scale(0.95);
+      }
+
+      .key.wide {
+        min-width: 65px;
+        font-size: 12px;
+      }
+
+      .key.correct {
+        background-color: #6aaa64 !important;
+        color: white !important;
+      }
+
+      .key.present {
+        background-color: #c9b458 !important;
+        color: white !important;
+      }
+
+      .key.absent {
+        background-color: #787c7e !important;
+        color: white !important;
+      }
+
+      .wordle-message {
+        margin-top: 15px;
+        font-size: 20px;
+        min-height: 30px;
+        font-weight: bold;
+      }
+
+      .question-game {
+        text-align: center;
+      }
+
+      /* Emoji Game styles */
+      .emoji-game {
+        text-align: center;
+      }
+
+      .emoji-display {
+        font-size: 80px;
+        margin: 30px 0;
+        min-height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .emoji-input {
+        width: 90%;
+        padding: 12px;
+        font-size: 18px;
+        text-align: center;
+        border: 2px solid #333;
+        border-radius: 5px;
+        font-family: "Luckiest Guy", cursive;
+        margin-bottom: 10px;
+      }
+
+      .emoji-submit {
+        padding: 12px 30px;
+        font-size: 18px;
+        background-color: #6aaa64;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: "Luckiest Guy", cursive;
+        width: 90%;
+      }
+
+      .emoji-submit:hover {
+        background-color: #5a9a54;
+      }
+
+      .emoji-message {
+        margin-top: 15px;
+        font-size: 18px;
+        min-height: 25px;
+        font-weight: bold;
+      }
+
+      .emoji-progress {
+        margin-top: 20px;
+        font-size: 16px;
+        color: #666;
+      }
+      .white-space-preline {
+        white-space: pre-line;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container">
+      <h2 id="team-name">GOOD LUCK</h2>
+      <div class="grid-wrapper">
+        <img class="background-image" src="bleh.png" alt="Hidden image" />
+        <div class="grid" id="grid"></div>
+      </div>
+      <img class="bottomImg" src="bottom.png" alt="minionssssssss" />
+      <div id="final-reveal">🎉 All tiles revealed! 🎉</div>
+    </div>
+
+    <!-- Wordle Modal -->
+    <div id="wordle-modal" class="modal">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeWordleModal()">&times;</button>
+        <h2>Game 1: Wordle</h2>
+        <div class="wordle-board" id="wordle-board"></div>
+        <div class="keyboard" id="keyboard"></div>
+        <div class="wordle-message" id="wordle-message"></div>
+      </div>
+    </div>
+
+    <!-- Emoji Guessing Modal -->
+    <div id="emoji-modal" class="modal">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeEmojiModal()">&times;</button>
+        <h2>Game 2: Guess the Emoji</h2>
+        <div class="emoji-game">
+          <div class="emoji-display" id="emoji-display"></div>
+          <input
+            type="text"
+            id="emoji-input"
+            class="emoji-input"
+            placeholder="Type your answer..."
+          />
+          <button class="emoji-submit" onclick="submitEmojiGuess()">
+            Submit
+          </button>
+          <div class="emoji-message" id="emoji-message"></div>
+          <div class="emoji-progress" id="emoji-progress">Question 1 of 5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amazing Race Question Modal -->
+    <div id="qa-modal" class="modal">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeQAModal()">&times;</button>
+        <h2 id="qa-title"></h2>
+        <div class="question-game">
+          <p id="qa-question" class="white-space-preline"></p>
+          <input
+            type="text"
+            id="qa-input"
+            class="emoji-input"
+            placeholder="Type your answer..."
+          />
+          <button class="emoji-submit" onclick="submitQAAnswer()">
+            Submit
+          </button>
+          <div class="emoji-message" id="qa-message"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Wordle game state
+      let currentWord = "APPLE";
+      let currentRow = 0;
+      let currentCol = 0;
+      const maxGuesses = 6;
+      let gameWon = false;
+      let currentGuess = "";
+      let keyboardState = {};
+
+      const tileQuestions = [
+        {
+          tileIndex: 3,
+          title: "Checkpoint 1",
+          question: "Who captured Gru?",
+          answer: "agnes",
+          requiresPrevious: null,
+        },
+        {
+          tileIndex: 4,
+          title: "Checkpoint 2",
+          question: "Why did Agnes capture Gru?",
+          answer: "torn pony",
+          requiresPrevious: 3,
+        },
+        {
+          tileIndex: 5,
+          title: "Checkpoint 3",
+          question: "Where is Gru?",
+          answer: "hillgrove",
+          requiresPrevious: 4,
+        },
+        {
+          tileIndex: 6,
+          title: "Riddle 1",
+          question:
+            "Yellow and red, I stand out in the sight,\nSpicy and sweet, a local delight.\nWhen you're stuck and just aiming to score,\nShade me for luck – I might give you more!",
+          answer: "abc chilli",
+          requiresPrevious: null,
+        },
+        {
+          tileIndex: 7,
+          title: "Riddle 2",
+          question: "What animal does Gru hate?",
+          answer: "unicorns",
+          requiresPrevious: null,
+        },
+        {
+          tileIndex: 8,
+          title: "Riddle 3",
+          question: "What color are minions?",
+          answer: "yellow",
+          requiresPrevious: null,
+        },
+      ];
+      let currentQATile = null;
+
+      // SessionStorage functions (clears when tab/browser closes)
+      function saveGameState() {
+        const revealedTiles = Array.from(
+          document.querySelectorAll(".tile.revealed")
+        ).map((tile) => parseInt(tile.getAttribute("data-tile-index")));
+
+        sessionStorage.setItem(
+          "escapeGridRevealed",
+          JSON.stringify(revealedTiles)
+        );
+        console.log("💾 Game saved! Data will clear when you close the tab.");
+      }
+
+      function loadGameState() {
+        const saved = sessionStorage.getItem("escapeGridRevealed");
+        if (!saved) {
+          console.log("🎮 Starting fresh game session!");
+          return [];
+        }
+
+        try {
+          const tiles = JSON.parse(saved);
+          console.log("✅ Game progress restored!");
+          return tiles;
+        } catch (e) {
+          console.error("Error loading game state:", e);
+          return [];
+        }
+      }
+
+      function isTileRevealed(tileIndex) {
+        const revealed = loadGameState();
+        return revealed.includes(tileIndex);
+      }
+
+      // Emoji game state
+      const emojiQuestions = [
+        { emoji: "🦁🌊", answer: "merlion", hint: "Singapore's iconic symbol" },
+        { emoji: "🐔🍚", answer: "chicken rice", hint: "National dish" },
+        {
+          emoji: "🌴🌺🌆",
+          answer: "garden city",
+          hint: "Singapore's nickname",
+        },
+      ];
+      let currentEmojiQuestion = 0;
+      let emojiGameWon = false;
+
+      const keyboard = [
+        ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+        ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+        ["BACK", "Z", "X", "C", "V", "B", "N", "M", "ENTER"],
+      ];
+
+      window.onload = () => {
+        const grid = document.getElementById("grid");
+
+        // Create 9 tiles (3x3)
+        for (let i = 0; i < 9; i++) {
+          const tile = document.createElement("div");
+          tile.className = "tile";
+          tile.setAttribute("data-tile-index", i);
+          const questionTile = tileQuestions.find((q) => q.tileIndex === i);
+
+          // Check if tile was already revealed
+          if (isTileRevealed(i)) {
+            tile.classList.add("revealed");
+          }
+
+          // First tile is Game 1 (Wordle)
+          if (i === 0) {
+            tile.textContent = "Game 1";
+            tile.onclick = () => openWordleModal();
+          } else if (i === 1) {
+            // Second tile is Game 2 (Emoji)
+            tile.textContent = "Game 2";
+            tile.onclick = () => openEmojiModal();
+          } else if (questionTile) {
+            tile.textContent = questionTile.title;
+            tile.onclick = () => {
+              // Check if previous checkpoint is required and completed
+              if (questionTile.requiresPrevious !== null) {
+                if (!isTileRevealed(questionTile.requiresPrevious)) {
+                  alert(
+                    `Please complete ${
+                      tileQuestions.find(
+                        (q) => q.tileIndex === questionTile.requiresPrevious
+                      ).title
+                    } first!`
+                  );
+                  return;
+                }
+              }
+              openQAModal(questionTile);
+            };
+          } else {
+            // Other tiles just reveal on click for now
+            tile.onclick = () => revealTile(tile);
+          }
+
+          grid.appendChild(tile);
+        }
+
+        // Initialize Wordle board and keyboard
+        initWordleBoard();
+        initKeyboard();
+
+        // Listen for physical keyboard
+        document.addEventListener("keydown", handleKeyPress);
+
+        // Check if all tiles are revealed on load
+        checkAllRevealed();
+      };
+
+      function openQAModal(questionObj) {
+        currentQATile = questionObj;
+        document.getElementById("qa-title").textContent = questionObj.title;
+        document.getElementById("qa-question").textContent =
+          questionObj.question;
+        document.getElementById("qa-input").value = "";
+        document.getElementById("qa-message").textContent = "";
+        document.getElementById("qa-modal").classList.add("active");
+        document.getElementById("qa-input").focus();
+      }
+
+      function closeQAModal() {
+        document.getElementById("qa-modal").classList.remove("active");
+      }
+
+      function submitQAAnswer() {
+        const inputAnswer = document
+          .getElementById("qa-input")
+          .value.trim()
+          .toLowerCase();
+        const msg = document.getElementById("qa-message");
+
+        if (!inputAnswer) {
+          msg.textContent = "Please enter an answer!";
+          msg.style.color = "#d32f2f";
+          return;
+        }
+
+        if (inputAnswer === currentQATile.answer.toLowerCase()) {
+          msg.textContent = "✅ Correct!";
+          msg.style.color = "#6aaa64";
+
+          setTimeout(() => {
+            closeQAModal();
+            revealTile(
+              document.querySelector(
+                `[data-tile-index="${currentQATile.tileIndex}"]`
+              )
+            );
+          }, 1000);
+        } else {
+          msg.textContent = "❌ Try again!";
+          msg.style.color = "#d32f2f";
+          document.getElementById("qa-input").value = "";
+        }
+      }
+
+      function initWordleBoard() {
+        const board = document.getElementById("wordle-board");
+        board.innerHTML = "";
+
+        for (let i = 0; i < maxGuesses; i++) {
+          const row = document.createElement("div");
+          row.className = "wordle-row";
+          row.setAttribute("data-row", i);
+
+          for (let j = 0; j < 5; j++) {
+            const letter = document.createElement("div");
+            letter.className = "wordle-letter";
+            letter.setAttribute("data-col", j);
+            row.appendChild(letter);
+          }
+
+          board.appendChild(row);
+        }
+      }
+
+      function initKeyboard() {
+        const keyboardEl = document.getElementById("keyboard");
+        keyboardEl.innerHTML = "";
+
+        keyboard.forEach((row) => {
+          const rowEl = document.createElement("div");
+          rowEl.className = "keyboard-row";
+
+          row.forEach((key) => {
+            const keyEl = document.createElement("button");
+            keyEl.className = "key";
+            keyEl.textContent = key;
+            keyEl.setAttribute("data-key", key);
+
+            if (key === "ENTER" || key === "BACK") {
+              keyEl.classList.add("wide");
+            }
+
+            keyEl.onclick = () => handleKeyClick(key);
+            rowEl.appendChild(keyEl);
+          });
+
+          keyboardEl.appendChild(rowEl);
+        });
+      }
+
+      function handleKeyPress(e) {
+        if (
+          !document.getElementById("wordle-modal").classList.contains("active")
+        )
+          return;
+        if (gameWon || currentRow >= maxGuesses) return;
+
+        const key = e.key.toUpperCase();
+
+        if (key === "ENTER") {
+          handleKeyClick("ENTER");
+        } else if (key === "BACKSPACE") {
+          handleKeyClick("BACK");
+        } else if (/^[A-Z]$/.test(key)) {
+          handleKeyClick(key);
+        }
+      }
+
+      function handleKeyClick(key) {
+        if (gameWon || currentRow >= maxGuesses) return;
+
+        if (key === "ENTER") {
+          submitGuess();
+        } else if (key === "BACK") {
+          if (currentCol > 0) {
+            currentCol--;
+            currentGuess = currentGuess.slice(0, -1);
+            updateCurrentRow();
+          }
+        } else if (currentCol < 5) {
+          currentGuess += key;
+          currentCol++;
+          updateCurrentRow();
+        }
+      }
+
+      function updateCurrentRow() {
+        const row = document.querySelector(`[data-row="${currentRow}"]`);
+        const letters = row.querySelectorAll(".wordle-letter");
+
+        for (let i = 0; i < 5; i++) {
+          if (i < currentGuess.length) {
+            letters[i].textContent = currentGuess[i];
+            letters[i].classList.add("filled");
+          } else {
+            letters[i].textContent = "";
+            letters[i].classList.remove("filled");
+          }
+        }
+      }
+
+      function submitGuess() {
+        if (currentGuess.length !== 5) {
+          document.getElementById("wordle-message").textContent =
+            "Not enough letters!";
+          setTimeout(() => {
+            document.getElementById("wordle-message").textContent = "";
+          }, 1000);
+          return;
+        }
+
+        const guess = currentGuess;
+        const row = document.querySelector(`[data-row="${currentRow}"]`);
+        const letters = row.querySelectorAll(".wordle-letter");
+        const letterCount = {};
+        const guessStatus = Array(5).fill("absent");
+
+        for (let char of currentWord) {
+          letterCount[char] = (letterCount[char] || 0) + 1;
+        }
+
+        for (let i = 0; i < 5; i++) {
+          if (guess[i] === currentWord[i]) {
+            guessStatus[i] = "correct";
+            letterCount[guess[i]]--;
+          }
+        }
+
+        for (let i = 0; i < 5; i++) {
+          if (
+            guessStatus[i] === "absent" &&
+            currentWord.includes(guess[i]) &&
+            letterCount[guess[i]] > 0
+          ) {
+            guessStatus[i] = "present";
+            letterCount[guess[i]]--;
+          }
+        }
+
+        guessStatus.forEach((status, i) => {
+          setTimeout(() => {
+            letters[i].classList.add(status);
+            updateKeyboardKey(guess[i], status);
+          }, i * 200);
+        });
+
+        if (guess === currentWord) {
+          gameWon = true;
+          setTimeout(() => {
+            document.getElementById("wordle-message").textContent =
+              "🎉 You won!";
+            setTimeout(() => {
+              closeWordleModal();
+              revealTile(document.querySelector('[data-tile-index="0"]'));
+              resetWordleGame();
+            }, 1500);
+          }, 1200);
+        } else {
+          currentRow++;
+          currentCol = 0;
+          currentGuess = "";
+
+          if (currentRow >= maxGuesses) {
+            setTimeout(() => {
+              document.getElementById(
+                "wordle-message"
+              ).textContent = `Game Over! Word was ${currentWord}`;
+            }, 1200);
+          }
+        }
+      }
+
+      function updateKeyboardKey(letter, status) {
+        const keyEl = document.querySelector(`.key[data-key="${letter}"]`);
+        if (!keyEl) return;
+
+        const currentStatus = keyboardState[letter];
+
+        if (
+          status === "correct" ||
+          (status === "present" && currentStatus !== "correct") ||
+          (status === "absent" && !currentStatus)
+        ) {
+          keyboardState[letter] = status;
+          keyEl.classList.remove("correct", "present", "absent");
+          keyEl.classList.add(status);
+        }
+      }
+
+      function openWordleModal() {
+        document.getElementById("wordle-modal").classList.add("active");
+      }
+
+      function closeWordleModal() {
+        document.getElementById("wordle-modal").classList.remove("active");
+      }
+
+      function resetWordleGame() {
+        currentRow = 0;
+        currentCol = 0;
+        gameWon = false;
+        currentGuess = "";
+        keyboardState = {};
+        document.getElementById("wordle-message").textContent = "";
+        initWordleBoard();
+        initKeyboard();
+      }
+
+      function revealTile(tile) {
+        tile.classList.add("revealed");
+        saveGameState();
+        checkAllRevealed();
+      }
+
+      function checkAllRevealed() {
+        const tiles = document.querySelectorAll(".tile");
         const allRevealed = Array.from(tiles).every((tile) =>
           tile.classList.contains("revealed")
         );
+
         if (allRevealed) {
-          column.classList.add("revealed");
+          document.getElementById("final-reveal").style.display = "block";
+        }
+      }
+
+      // Emoji Game Functions
+      function openEmojiModal() {
+        currentEmojiQuestion = 0;
+        emojiGameWon = false;
+        document.getElementById("emoji-modal").classList.add("active");
+        loadEmojiQuestion();
+        document.getElementById("emoji-input").focus();
+      }
+
+      function closeEmojiModal() {
+        document.getElementById("emoji-modal").classList.remove("active");
+      }
+
+      function loadEmojiQuestion() {
+        const question = emojiQuestions[currentEmojiQuestion];
+        document.getElementById("emoji-display").textContent = question.emoji;
+        document.getElementById("emoji-input").value = "";
+        document.getElementById("emoji-message").textContent = "";
+        document.getElementById("emoji-progress").textContent = `Question ${
+          currentEmojiQuestion + 1
+        } of ${emojiQuestions.length}`;
+      }
+
+      function submitEmojiGuess() {
+        if (emojiGameWon) return;
+
+        const input = document.getElementById("emoji-input");
+        const guess = input.value.trim().toLowerCase();
+        const question = emojiQuestions[currentEmojiQuestion];
+
+        if (!guess) {
+          document.getElementById("emoji-message").textContent =
+            "Please enter an answer!";
+          return;
+        }
+
+        if (guess === question.answer.toLowerCase()) {
+          document.getElementById("emoji-message").textContent = "✅ Correct!";
+          document.getElementById("emoji-message").style.color = "#6aaa64";
+
+          setTimeout(() => {
+            currentEmojiQuestion++;
+
+            if (currentEmojiQuestion >= emojiQuestions.length) {
+              emojiGameWon = true;
+              document.getElementById("emoji-message").textContent =
+                "🎉 You completed all questions!";
+              setTimeout(() => {
+                closeEmojiModal();
+                revealTile(document.querySelector('[data-tile-index="1"]'));
+              }, 1500);
+            } else {
+              loadEmojiQuestion();
+            }
+          }, 1000);
+        } else {
+          document.getElementById("emoji-message").textContent =
+            "❌ Try again!";
+          document.getElementById("emoji-message").style.color = "#d32f2f";
+          input.value = "";
         }
       }
     </script>
