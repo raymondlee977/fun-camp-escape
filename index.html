@@ -53,6 +53,12 @@
         height: 100%;
         object-fit: cover;
         z-index: 0;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .background-image.visible {
+        opacity: 1;
       }
 
       .grid {
@@ -287,6 +293,11 @@
         text-align: center;
       }
 
+      
+      .rebus-game {
+        text-align: center;
+      }
+
       /* Emoji Game styles */
       .emoji-game {
         text-align: center;
@@ -410,6 +421,26 @@
       </div>
     </div>
 
+    <!-- Rebus Puzzle Modal -->
+    <div id="rebus-modal" class="modal">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeRebusModal()">&times;</button>
+        <h2>Game 3: Rebus Puzzle</h2>
+        <div class="rebus-game">
+          <img id="rebus-image" src="" alt="Rebus Puzzle" style="width:100%; max-width:500px; margin-bottom:20px;" />
+          <input
+            type="text"
+            id="rebus-input"
+            class="emoji-input"
+            placeholder="Type your answer..."
+          />
+          <button class="emoji-submit" onclick="submitRebusGuess()">Submit</button>
+          <div class="emoji-message" id="rebus-message"></div>
+          <div class="emoji-progress" id="rebus-progress">Question 1 of 5</div>
+        </div>
+      </div>
+    </div>
+
     <script>
       // Wordle game state
       let currentWord = "APPLE";
@@ -422,21 +453,21 @@
 
       const tileQuestions = [
         {
-          tileIndex: 3,
+          tileIndex: 0,
           title: "Checkpoint 1",
           question: "Who captured Gru?",
           answer: "agnes",
           requiresPrevious: null,
         },
         {
-          tileIndex: 4,
+          tileIndex: 1,
           title: "Checkpoint 2",
           question: "Why did Agnes capture Gru?",
           answer: "torn pony",
           requiresPrevious: 3,
         },
         {
-          tileIndex: 5,
+          tileIndex: 2,
           title: "Checkpoint 3",
           question: "Where is Gru?",
           answer: "hillgrove",
@@ -446,26 +477,38 @@
           tileIndex: 6,
           title: "Riddle 1",
           question:
-            "Yellow and red, I stand out in the sight,\nSpicy and sweet, a local delight.\nWhen you're stuck and just aiming to score,\nShade me for luck – I might give you more!",
-          answer: "abc chilli",
+            "I roar with pride but never bite,\nby the bay, I greet day and night.\nAn icon cast in stone unbroken,\nwith every photo taken, mouth wide open.",
+          answer: "merlion",
           requiresPrevious: null,
         },
         {
           tileIndex: 7,
           title: "Riddle 2",
-          question: "What animal does Gru hate?",
-          answer: "unicorns",
+          question: "I shape your day in tidy rows,\nwhere time is sliced and learning flows.\nThe bell and I, a steady pair,\nwe hold your time with measured care.",
+          answer: "timetable",
           requiresPrevious: null,
         },
         {
           tileIndex: 8,
           title: "Riddle 3",
-          question: "What color are minions?",
-          answer: "yellow",
+          question: "I speak no words, yet guard my space,\na quiet boss in mealtime race.\nThe rule’s unspoken,\nyet all obey — the sign unbroken.",
+          answer: "tissue packet",
           requiresPrevious: null,
         },
       ];
       let currentQATile = null;
+
+      // Rebus Puzzle Game State
+      const rebusImages = [
+        { src: "rebus-puzzle-1.png", answer: "forgive and forget" },
+        { src: "rebus-puzzle-2.png", answer: "head over heels" },
+        { src: "rebus-puzzle-3.png", answer: "crossbow" },
+        { src: "rebus-puzzle-4.png", answer: "address" },
+        { src: "rebus-puzzle-5.png", answer: "potatoes" },
+      ];
+
+      let currentRebusIndex = 0;
+      let rebusGameWon = false;
 
       // SessionStorage functions (clears when tab/browser closes)
       function saveGameState() {
@@ -504,12 +547,18 @@
 
       // Emoji game state
       const emojiQuestions = [
-        { emoji: "🦁🌊", answer: "merlion", hint: "Singapore's iconic symbol" },
-        { emoji: "🐔🍚", answer: "chicken rice", hint: "National dish" },
+        { emoji: "🛏️👌🏻", answer: "bedok" },
         {
-          emoji: "🌴🌺🌆",
-          answer: "garden city",
-          hint: "Singapore's nickname",
+          emoji: "⛵🏢🏢🏢",
+          answer: "marina bay sands",
+        },
+        {
+          emoji: "🐯🧴🔥",
+          answer: "tiger balm",
+        },
+        {
+          emoji: "👴🏻✈️",
+          answer: "old chang kee",
         },
       ];
       let currentEmojiQuestion = 0;
@@ -520,6 +569,41 @@
         ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
         ["BACK", "Z", "X", "C", "V", "B", "N", "M", "ENTER"],
       ];
+
+      // Cache for validated words to avoid repeated API calls
+      const wordCache = {
+        valid: new Set(),
+        invalid: new Set(),
+      };
+
+      // Function to check if word is valid using dictionary API
+      async function isValidWord(word) {
+        const upperWord = word.toUpperCase();
+
+        // Check cache first
+        if (wordCache.valid.has(upperWord)) return true;
+        if (wordCache.invalid.has(upperWord)) return false;
+
+        try {
+          const response = await fetch(
+            `https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`
+          );
+          const isValid = response.ok;
+
+          // Cache the result
+          if (isValid) {
+            wordCache.valid.add(upperWord);
+          } else {
+            wordCache.invalid.add(upperWord);
+          }
+
+          return isValid;
+        } catch (error) {
+          console.error("Dictionary API error:", error);
+          // If API fails, accept the word (fallback behavior)
+          return true;
+        }
+      }
 
       window.onload = () => {
         const grid = document.getElementById("grid");
@@ -537,13 +621,17 @@
           }
 
           // First tile is Game 1 (Wordle)
-          if (i === 0) {
+          if (i === 3) {
             tile.textContent = "Game 1";
             tile.onclick = () => openWordleModal();
-          } else if (i === 1) {
+          } else if (i === 4) {
             // Second tile is Game 2 (Emoji)
             tile.textContent = "Game 2";
             tile.onclick = () => openEmojiModal();
+          } else if (i === 5) {
+            // Second tile is Game 2 (Emoji)
+            tile.textContent = "Game 3";
+            tile.onclick = () => openRebusModal();
           } else if (questionTile) {
             tile.textContent = questionTile.title;
             tile.onclick = () => {
@@ -577,7 +665,8 @@
         // Listen for physical keyboard
         document.addEventListener("keydown", handleKeyPress);
 
-        // Check if all tiles are revealed on load
+        // Check if background should be visible and if all tiles are revealed on load
+        checkAndShowBackground();
         checkAllRevealed();
       };
 
@@ -725,7 +814,7 @@
         }
       }
 
-      function submitGuess() {
+      async function submitGuess() {
         if (currentGuess.length !== 5) {
           document.getElementById("wordle-message").textContent =
             "Not enough letters!";
@@ -734,6 +823,23 @@
           }, 1000);
           return;
         }
+
+        // Show checking message
+        document.getElementById("wordle-message").textContent = "Checking...";
+
+        // Check if the word is valid
+        const isValid = await isValidWord(currentGuess);
+        if (!isValid) {
+          document.getElementById("wordle-message").textContent =
+            "Not in word list!";
+          setTimeout(() => {
+            document.getElementById("wordle-message").textContent = "";
+          }, 1000);
+          return;
+        }
+
+        // Clear checking message
+        document.getElementById("wordle-message").textContent = "";
 
         const guess = currentGuess;
         const row = document.querySelector(`[data-row="${currentRow}"]`);
@@ -777,7 +883,7 @@
               "🎉 You won!";
             setTimeout(() => {
               closeWordleModal();
-              revealTile(document.querySelector('[data-tile-index="0"]'));
+              revealTile(document.querySelector('[data-tile-index="3"]'));
               resetWordleGame();
             }, 1500);
           }, 1200);
@@ -835,7 +941,19 @@
       function revealTile(tile) {
         tile.classList.add("revealed");
         saveGameState();
+        checkAndShowBackground();
         checkAllRevealed();
+      }
+
+      function checkAndShowBackground() {
+        const tiles = document.querySelectorAll(".tile");
+        const anyRevealed = Array.from(tiles).some((tile) =>
+          tile.classList.contains("revealed")
+        );
+
+        if (anyRevealed) {
+          document.querySelector(".background-image").classList.add("visible");
+        }
       }
 
       function checkAllRevealed() {
@@ -898,7 +1016,7 @@
                 "🎉 You completed all questions!";
               setTimeout(() => {
                 closeEmojiModal();
-                revealTile(document.querySelector('[data-tile-index="1"]'));
+                revealTile(document.querySelector('[data-tile-index="4"]'));
               }, 1500);
             } else {
               loadEmojiQuestion();
@@ -908,6 +1026,67 @@
           document.getElementById("emoji-message").textContent =
             "❌ Try again!";
           document.getElementById("emoji-message").style.color = "#d32f2f";
+          input.value = "";
+        }
+      }
+
+      function openRebusModal() {
+        currentRebusIndex = 0;
+        rebusGameWon = false;
+        document.getElementById("rebus-modal").classList.add("active");
+        loadRebusQuestion();
+        document.getElementById("rebus-input").focus();
+      }
+
+      function closeRebusModal() {
+        document.getElementById("rebus-modal").classList.remove("active");
+      }
+
+      function loadRebusQuestion() {
+        const question = rebusImages[currentRebusIndex];
+        document.getElementById("rebus-image").src = question.src;
+        document.getElementById("rebus-input").value = "";
+        document.getElementById("rebus-message").textContent = "";
+        document.getElementById(
+          "rebus-progress"
+        ).textContent = `Question ${currentRebusIndex + 1} of ${rebusImages.length}`;
+      }
+
+      function submitRebusGuess() {
+        if (rebusGameWon) return;
+
+        const input = document.getElementById("rebus-input");
+        const guess = input.value.trim().toLowerCase();
+        const question = rebusImages[currentRebusIndex];
+
+        if (!guess) {
+          document.getElementById("rebus-message").textContent =
+            "Please enter an answer!";
+          return;
+        }
+
+        if (guess === question.answer.toLowerCase()) {
+          document.getElementById("rebus-message").textContent = "✅ Correct!";
+          document.getElementById("rebus-message").style.color = "#6aaa64";
+
+          setTimeout(() => {
+            currentRebusIndex++;
+
+            if (currentRebusIndex >= rebusImages.length) {
+              rebusGameWon = true;
+              document.getElementById("rebus-message").textContent =
+                "🎉 You completed all puzzles!";
+              setTimeout(() => {
+                closeRebusModal();
+                revealTile(document.querySelector('[data-tile-index="5"]'));
+              }, 1500);
+            } else {
+              loadRebusQuestion();
+            }
+          }, 1000);
+        } else {
+          document.getElementById("rebus-message").textContent = "❌ Try again!";
+          document.getElementById("rebus-message").style.color = "#d32f2f";
           input.value = "";
         }
       }
