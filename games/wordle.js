@@ -13,18 +13,25 @@ const keyboard = [
 ];
 
 let words = []; // single list for both picking and validation
+let guess = [];
 
 // Fetch the words.json file
 fetch("./assets/words.json")
   .then((res) => res.json())
   .then((data) => {
     words = data.map((w) => w.toUpperCase());
+  });
+
+fetch("./assets/guess.json")
+  .then((res) => res.json())
+  .then((data) => {
+    guess = data.map((g) => g.toUpperCase());
     pickRandomWord(); // pick the initial random word
   });
 
 // Pick a random word from the list
 function pickRandomWord() {
-  currentWord = words[Math.floor(Math.random() * words.length)];
+  currentWord = guess[Math.floor(Math.random() * guess.length)];
 }
 
 // Validate a guess

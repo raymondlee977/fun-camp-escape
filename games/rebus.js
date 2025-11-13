@@ -3,7 +3,7 @@ const rebusImages = [
   { src: "./assets/rebus-puzzle-2.png", answer: "head over heels" },
   { src: "./assets/rebus-puzzle-3.png", answer: "crossbow" },
   { src: "./assets/rebus-puzzle-4.png", answer: "address" },
-  { src: "./assets/rebus-puzzle-5.png", answer: "potatoes" },
+  // { src: "./assets/rebus-puzzle-5.png", answer: "potatoes" },
 ];
 
 let currentRebusIndex = 0;

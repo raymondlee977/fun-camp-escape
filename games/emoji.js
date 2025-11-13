@@ -1,14 +1,14 @@
 // Emoji game state
 const emojiQuestions = [
-  { emoji: "🛏️👌🏻", answer: "bedok" },
   {
     emoji: "⛵🏢🏢🏢",
     answer: "marina bay sands",
   },
-  {
-    emoji: "🐯🧴🔥",
-    answer: "tiger balm",
-  },
+  { emoji: "🛏️👌🏻", answer: "bedok" },
+  // {
+  //   emoji: "🐯🧴🔥",
+  //   answer: "tiger balm",
+  // },
   {
     emoji: "👴🏻✈️",
     answer: "old chang kee",

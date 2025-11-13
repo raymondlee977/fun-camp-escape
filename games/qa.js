@@ -39,7 +39,7 @@
     tileIndex: 8,
     title: "Riddle 3",
     question: "I speak no words, yet guard my space,\na quiet boss in mealtime race.\nThe rule’s unspoken,\nyet all obey — the sign unbroken.",
-    answer: "tissue packet",
+    answer: "tissue",
     requiresPrevious: null,
   },
 ];
