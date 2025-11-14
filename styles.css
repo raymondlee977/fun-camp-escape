@@ -6,6 +6,7 @@ body {
   align-items: flex-start;
   height: 100vh;
   padding-top: 1vh;
+  font-family: 'Comic Relief', cursive;
   overflow: hidden;
 }
 
@@ -307,7 +308,7 @@ body {
   text-align: center;
   border: 2px solid #333;
   border-radius: 5px;
-  font-family: "Luckiest Guy", cursive;
+  font-family: 'Comic Relief', cursive;
   margin-bottom: 10px;
 }
 
@@ -319,7 +320,7 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-family: "Luckiest Guy", cursive;
+  font-family: 'Comic Relief', cursive;
   width: 90%;
 }
 
