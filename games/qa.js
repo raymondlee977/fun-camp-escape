@@ -1,24 +1,24 @@
  const tileQuestions = [
   {
     tileIndex: 0,
-    title: "Checkpoint 3",
-    question: "Where is Gru?",
-    answer: "hillgrove",
-    requiresPrevious: 1,
-  },
-  {
-    tileIndex: 1,
-    title: "Checkpoint 2",
-    question: "Why did Agnes capture Gru?",
-    answer: "torn pony",
-    requiresPrevious: 2,
-  },
-  {
-    tileIndex: 2,
     title: "Checkpoint 1",
     question: "Who captured Gru?",
     answer: "agnes",
     requiresPrevious: null,
+  },
+  {
+    tileIndex: 1,
+    title: "Checkpoint 3",
+    question: "Where is Gru?",
+    answer: "hillgrove",
+    requiresPrevious: 2,
+  },
+  {
+    tileIndex: 2,
+    title: "Checkpoint 2",
+    question: "Why did Agnes capture Gru?",
+    answer: "torn unicorn",
+    requiresPrevious: 0,
   },
   {
     tileIndex: 6,
